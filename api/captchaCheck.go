@@ -30,12 +30,16 @@ func (s *Service) apiV0CaptchaCheck(w http.ResponseWriter, r *http.Request) {
 	captcha, err := s.Cache.Get(sessionToken).Result()
 	if err != nil {
 		logrus.Error("Could not find session token in cache")
+		logrus.Debug("Could not find session token in cache: ", sessionToken)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
+	logrus.Debug(sessionToken, vars["captcha"], captcha)
+
 	if captcha != vars["captcha"] {
 		logrus.Error("Wrong captcha")
+		logrus.Debug("Wrong captcha: ", vars["captcha"], captcha)
 		w.Write(jsonStr)
 		return
 	}

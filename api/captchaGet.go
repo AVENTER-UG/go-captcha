@@ -47,6 +47,7 @@ func (s *Service) apiV0CaptchaGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error("Could not create session token")
 	}
+	logrus.Debug("Add SessionToken: ", sessionToken, captcha)
 	err = s.Cache.Set(sessionToken, captcha, 0).Err()
 	if err != nil {
 		logrus.Error("Could not store session token")
@@ -54,7 +55,7 @@ func (s *Service) apiV0CaptchaGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("sessionToken:", sessionToken)
+	w.Header().Set("sessionToken", sessionToken)
 	w.Write(content)
 }
 
