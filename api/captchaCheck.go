@@ -1,6 +1,7 @@
 package api
 
 import (
+	"html"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,7 +13,7 @@ func (s *Service) apiV0CaptchaCheck(w http.ResponseWriter, r *http.Request) {
 
 	jsonStr := []byte(`{"valid": "false"}`)
 
-	sessionToken := r.Header.Get("sessionToken")
+	sessionToken := html.EscapeString(r.Header.Get("sessionToken"))
 
 	if sessionToken == "" {
 		logrus.Error("Session Token is empty")
@@ -35,11 +36,12 @@ func (s *Service) apiV0CaptchaCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logrus.Debug(sessionToken, vars["captcha"], captcha)
+	userCapcha := html.EscapeString(vars["captcha"])
+	logrus.Debug(sessionToken, userCapcha, captcha)
 
-	if captcha != vars["captcha"] {
+	if captcha != userCapcha {
 		logrus.Error("Wrong captcha")
-		logrus.Debug("Wrong captcha: ", vars["captcha"], captcha)
+		logrus.Debug("Wrong captcha: ", userCapcha, captcha)
 		w.Write(jsonStr)
 		return
 	}
