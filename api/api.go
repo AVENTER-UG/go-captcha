@@ -30,6 +30,7 @@ func (s *Service) Commands() *mux.Router {
 	rtr := mux.NewRouter()
 	rtr.HandleFunc("/versions", s.apiVersions).Methods("GET")
 	rtr.HandleFunc("/api", s.apiVersions).Methods("GET")
+	rtr.HandleFunc("/health", s.apiHealth).Methods("GET")
 	rtr.HandleFunc("/api/captcha/v0/version", s.apiV0Version).Methods("GET")
 	rtr.HandleFunc("/api/captcha/v0", s.apiV0CaptchaGet).Methods("GET")
 	rtr.HandleFunc("/api/captcha/v0/{captcha}", s.apiV0CaptchaCheck).Methods("POST")
