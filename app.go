@@ -10,6 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var MinVersion string
+
 // init the redis cache
 func initCache() {
 	client := redis.NewClient(&redis.Options{

@@ -10,9 +10,9 @@ import (
 	"os"
 
 	"git.aventer.biz/AVENTER/util"
+	"github.com/golang/freetype/truetype"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
 )
 
@@ -22,7 +22,7 @@ func (s *Service) apiV0CaptchaGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Api-Service", "v0")
 
 	captcha := randString(8)
-	img := image.NewRGBA(image.Rect(0, 0, 100, 50))
+	img := image.NewRGBA(image.Rect(0, 0, 140, 50))
 	addLabel(img, 20, 30, captcha)
 
 	tmpFile, err := ioutil.TempFile(os.TempDir(), "prefix-")
@@ -46,12 +46,14 @@ func (s *Service) apiV0CaptchaGet(w http.ResponseWriter, r *http.Request) {
 	sessionToken, err := util.GenUUID()
 	if err != nil {
 		logrus.Error("Could not create session token")
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	logrus.Debug("Add SessionToken: ", sessionToken, captcha)
 	err = s.Cache.Set(sessionToken, captcha, 0).Err()
 	if err != nil {
 		logrus.Error("Could not store session token")
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -61,16 +63,30 @@ func (s *Service) apiV0CaptchaGet(w http.ResponseWriter, r *http.Request) {
 
 // add label to temp image file
 func addLabel(img *image.RGBA, x, y int, label string) {
-	col := color.RGBA{200, 100, 0, 255}
-	point := fixed.Point26_6{fixed.Int26_6(x * 64), fixed.Int26_6(y * 64)}
+	oFont, err := ioutil.ReadFile("font/Inter-Regular.ttf")
 
-	d := &font.Drawer{
-		Dst:  img,
-		Src:  image.NewUniform(col),
-		Face: basicfont.Face7x13,
-		Dot:  point,
+	if err != nil {
+		logrus.Error("Could not load font: ", err)
+		return
 	}
-	d.DrawString(label)
+
+	point := fixed.Point26_6{fixed.Int26_6(x * 64), fixed.Int26_6(y * 64)}
+	col := color.RGBA{200, 100, 0, 255}
+
+	fontTT, _ := truetype.Parse(oFont)
+
+	fnt := &font.Drawer{
+		Dst: img,
+		Src: image.NewUniform(col),
+		//Face: basicfont.Face7x13,
+		Face: truetype.NewFace(fontTT, &truetype.Options{
+			Size:    16,
+			DPI:     92,
+			Hinting: font.HintingFull,
+		}),
+		Dot: point,
+	}
+	fnt.DrawString(label)
 }
 
 // create random string
