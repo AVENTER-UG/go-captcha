@@ -3,7 +3,6 @@ package api
 import (
 	//"encoding/json"
 
-	"git.aventer.biz/AVENTER/util"
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
 
@@ -11,7 +10,8 @@ import (
 
 	"net/http"
 
-	cfg "../types"
+	cfg "github.com/AVENTER-UG/go-captcha/types"
+	util "github.com/AVENTER-UG/util"
 )
 
 type Service struct {

@@ -4,8 +4,8 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
-	api "./api"
-	util "git.aventer.biz/AVENTER/util"
+	api "github.com/AVENTER-UG/go-captcha/api"
+	util "github.com/AVENTER-UG/util"
 	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
 )

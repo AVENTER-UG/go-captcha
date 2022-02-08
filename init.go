@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	cfg "./types"
+	cfg "github.com/AVENTER-UG/go-captcha/types"
 )
 
 var config cfg.Config

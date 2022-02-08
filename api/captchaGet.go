@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 
-	"git.aventer.biz/AVENTER/util"
+	util "github.com/AVENTER-UG/util"
 	"github.com/golang/freetype/truetype"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/image/font"
